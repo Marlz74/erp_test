@@ -1,6 +1,6 @@
 const allowedOrigins = process.env.FRONTEND_URL
     ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-    : ['http://localhost:5173'];
+    : ['https://erptest.kreater.africa'];
 
 export const corsOptions = {
     origin: allowedOrigins,

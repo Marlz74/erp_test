@@ -7,7 +7,7 @@
         "contact": {
             "name": "API Support",
             "email": "utpatrick74@gmail.com",
-            "url": "https://userapi.com/support"
+            "url": "https://utibepatrick.vercel.app/"
         },
         "license": {
             "name": "MIT",
@@ -21,7 +21,7 @@
             "description": "Development server"
         },
         {
-            "url": "https://api-staging.userapi.com",
+            "url": "https://erptest.kreater.africa",
             "description": "Staging server"
         }
     ],

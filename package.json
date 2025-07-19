@@ -24,12 +24,12 @@
     "mssql": "^11.0.1",
     "mysql2": "^3.14.2",
     "sanitize-html": "^2.17.0",
+    "typeorm": "^0.3.25",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
-    "typeorm": "^0.3.25",
     "typescript": "^5.8.3"
   },
   "engines": {
