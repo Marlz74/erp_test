@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "ESNext",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "skipLibCheck": true,
+        "allowJs": true,
+        "checkJs": false,
+        "noEmit": true,
+        "baseUrl": "."
+    },
+    "include": [
+        "src/entities/**/*.js",
+        "src/migrations/**/*.js"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "src/app.js",
+        "src/server.js",
+        "src/config/database.js",
+        "src/config/database copy.js",
+        "src/controllers/**/*.js",
+        "src/routes/**/*.js",
+        "src/middleware/**/*.js",
+        "src/utils/**/*.js"
+    ]
+}

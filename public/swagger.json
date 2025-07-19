@@ -1,0 +1,434 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "User API",
+        "version": "1.0.0",
+        "description": "API for managing users with rate limiting (100 requests per minute per IP)",
+        "contact": {
+            "name": "API Support",
+            "email": "utpatrick74@gmail.com",
+            "url": "https://userapi.com/support"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "termsOfService": "https://userapi.com/terms"
+    },
+    "servers": [
+        {
+            "url": "https://localhost:3000",
+            "description": "Development server"
+        },
+        {
+            "url": "https://api-staging.userapi.com",
+            "description": "Staging server"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Users",
+            "description": "User management operations"
+        }
+    ],
+    "paths": {
+        "/api/v1/users": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get users with pagination",
+                "description": "Retrieve a paginated list of users. Returns user data along with pagination metadata.",
+                "operationId": "getUsers",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "description": "Page number for pagination"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100
+                        },
+                        "description": "Number of users per page (maximum 100)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "code`": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/User"
+                                                    }
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "description": "Total number of users",
+                                                    "example": 150
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "description": "Current page number",
+                                                    "example": 1
+                                                },
+                                                "lastPage": {
+                                                    "type": "integer",
+                                                    "description": "Last available page number",
+                                                    "example": 15
+                                                }
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Users retrieved successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "headers": {
+                            "RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Maximum number of requests allowed per minute"
+                            },
+                            "RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Remaining requests in the current window"
+                            },
+                            "RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Time (in seconds) until the rate limit resets"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid pagination parameters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too many requests - rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a new user",
+                "description": "Create a new user with the provided information. All fields are required.",
+                "operationId": "createUser",
+                "requestBody": {
+                    "required": true,
+                    "description": "User data to create",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "code`": {
+                                            "type": "integer",
+                                            "example": 201
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User created successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "headers": {
+                            "RateLimit-Limit": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Maximum number of requests allowed per minute"
+                            },
+                            "RateLimit-Remaining": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Remaining requests in the current window"
+                            },
+                            "RateLimit-Reset": {
+                                "schema": {
+                                    "type": "integer"
+                                },
+                                "description": "Time (in seconds) until the rate limit resets"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data or validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "User already exists (duplicate email)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Too many requests - rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "description": "User object with all user information",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Unique identifier for the user",
+                        "example": 123
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "description": "Full name of the user",
+                        "example": "John Doe"
+                    },
+                    "age": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 150,
+                        "description": "Age of the user in years",
+                        "example": 30
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 100,
+                        "description": "Email address of the user",
+                        "example": "john.doe@example.com"
+                    },
+                    "address": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "description": "Physical address of the user",
+                        "example": "123 Main St, Anytown, USA 12345"
+                    },
+                    "occupation": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "description": "Current occupation or job title",
+                        "example": "Software Engineer"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Timestamp when the user was created",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Timestamp when the user was last updated",
+                        "example": "2024-01-15T10:30:00Z"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "age",
+                    "email",
+                    "address",
+                    "occupation",
+                    "createdAt",
+                    "updatedAt"
+                ]
+            },
+            "UserInput": {
+                "type": "object",
+                "description": "User input data for creating a new user",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 1,
+                        "description": "Full name of the user",
+                        "example": "John Doe"
+                    },
+                    "age": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 150,
+                        "description": "Age of the user in years",
+                        "example": 30
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 100,
+                        "description": "Email address of the user (must be unique)",
+                        "example": "john.doe@example.com"
+                    },
+                    "address": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "description": "Physical address of the user",
+                        "example": "123 Main St, Anytown, USA 12345"
+                    },
+                    "occupation": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 1,
+                        "description": "Current occupation or job title",
+                        "example": "Software Engineer"
+                    }
+                },
+                "required": [
+                    "name",
+                    "age",
+                    "email",
+                    "address",
+                    "occupation"
+                ],
+                "additionalProperties": false
+            },
+            "Error": {
+                "type": "object",
+                "description": "Standard error response format",
+                "properties": {
+                    "status": {
+                        "type": "boolean",
+                        "example": false,
+                        "description": "Indicates if the request was successful"
+                    },
+                    "error": {
+                        "type": "string",
+                        "description": "Error message describing what went wrong",
+                        "example": "Invalid input: email field is required"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "description": "Error code for programmatic handling",
+                        "example": "VALIDATION_ERROR"
+                    }
+                },
+                "required": [
+                    "status",
+                    "code",
+                    "error"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key",
+                "description": "API key for authentication"
+            }
+        }
+    },
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ]
+}
